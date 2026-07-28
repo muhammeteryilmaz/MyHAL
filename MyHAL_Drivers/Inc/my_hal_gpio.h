@@ -16,8 +16,8 @@
 // MODER  REGISTER MODES
 #define INPUT_MODE				0x00
 #define OUTPUT_MODE				0x01
-#define ALTRNT_FUNC_MODE		0x10
-#define ANALOG_MODE				0x11
+#define ALTRNT_FUNC_MODE		0x02
+#define ANALOG_MODE				0x03
 
 // GPIO OFFSET ADDRESSES
 #define MODER_OFFSET_ADDR		0x00
@@ -53,10 +53,10 @@ typedef struct
 } GPIO_Config_t;
 
 void GPIO_Init(void);
-void GPIO_Set_Pin(volatile uint32_t *bsrr, uint8_t pin);
-void GPIO_Reset_Pin(volatile uint32_t *bsrr, uint8_t pin);
-void gpio_test(void);
 void GPIO_Port_Write(void);
+void GPIO_Set_Pin(uintptr_t port, uint8_t pin);
+void GPIO_Reset_Pin(uintptr_t port, uint8_t pin);
+uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin);
 void GPIO_Port_Configure(uintptr_t port, uint8_t mode, uint8_t pin, uint32_t otype, uint32_t speed, uint32_t pupdr);
 
 

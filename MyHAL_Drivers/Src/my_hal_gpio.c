@@ -17,7 +17,7 @@ static GPIO_Config_t gpio;
  */
 void GPIO_Init(void)
 {
-	RCC_AHB1ENR |= (0x1 << 1);
+	RCC_AHB1ENR |= (0x1U << 1U);
 }
 
 /*
@@ -30,16 +30,16 @@ void GPIO_Port_Write(void)
 	volatile uint32_t *speed = (volatile uint32_t *)(gpio.port + OSPEED_OFFSET_ADDR);
 	volatile uint32_t *pupdr = (volatile uint32_t *)(gpio.port + PUPDR_OFFSET_ADDR);
 
-	*moder &= ~(0x3 << gpio.pin*2); //clear bits
+	*moder &= ~(0x3U << gpio.pin*2); //clear bits
 	*moder |= (gpio.mode << gpio.pin*2); // set 0 and 1 bit as 01
 
-	*type &= ~(0x3 << gpio.pin); //clear bits
+	*type &= ~(0x3U << gpio.pin); //clear bits
 	*type |= (gpio.otype << gpio.pin);
 
-	*speed &= ~(0x3 << gpio.pin*2); //clear bits
+	*speed &= ~(0x3U << gpio.pin*2); //clear bits
 	*speed |= (gpio.speed << gpio.pin*2);
 
-	*pupdr &= ~(0x3 << gpio.pin*2); //clear bits
+	*pupdr &= ~(0x3U << gpio.pin*2); //clear bits
 	*pupdr |= (gpio.pupdr << gpio.pin*2);
 }
 
@@ -77,28 +77,54 @@ void GPIO_Port_Configure(uintptr_t port, uint8_t mode, uint8_t pin, uint32_t oty
 /*
  * Sets pin for output mode
  */
-void GPIO_Set_Pin(volatile uint32_t *bsrr, uint8_t pin)
+void GPIO_Set_Pin(uintptr_t port, uint8_t pin)
 {
-	*bsrr = (0x1 << pin);
+
+	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
+
+	if (GPIO_GetMode(port, pin) == OUTPUT_MODE)
+		*reg = (0x1U << pin);
 }
 
 /*
  * Resets pin for output mode
  */
-void GPIO_Reset_Pin(volatile uint32_t *bsrr, uint8_t pin)
+void GPIO_Reset_Pin(uintptr_t port, uint8_t pin)
 {
-	*bsrr = (0x1 << (16 + pin));
+
+	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
+
+	if (GPIO_GetMode(port, pin) == OUTPUT_MODE)
+		*reg = (0x1U << (16U + pin));
+
 }
 
 /*
- * gpio function test
+ * return Port Mode such as Output, Input, Alternate Function, and analog.
  */
-void gpio_test(void)
+uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin)
 {
-	GPIO_Set_Pin(GPIOB_BSRR_ADDR, 0);
-	uint32_t i = 5000000;
-	while(i){
-		i--;
-	}
-	GPIO_Reset_Pin(GPIOB_BSRR_ADDR, 0);
+	volatile uint32_t *moder = (volatile uint32_t *)(port + MODER_OFFSET_ADDR);
+
+	uint32_t port_mode = *moder;
+
+	uint32_t mask = 0;
+
+	mask |= (0x03U << (pin*2U));
+
+	port_mode &= mask;
+
+	port_mode = (port_mode >> (pin*2U));
+
+	if (port_mode == 0x01)
+		return OUTPUT_MODE;
+	if (port_mode == 0x00)
+		return INPUT_MODE;
+	if (port_mode == 0x02)
+		return ALTRNT_FUNC_MODE;
+	if (port_mode == 0x03)
+		return ANALOG_MODE;
+	else
+		return UINT8_MAX;
 }
+

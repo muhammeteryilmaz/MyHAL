@@ -76,7 +76,11 @@ int main(void)
   GPIO_Init();
 
   GPIO_Port_Configure(GPIOB_ADDR, OUTPUT_MODE, 0, 0x00000000, 0x000000C0, 0x00000100);
-  gpio_test();
+  GPIO_Port_Configure(GPIOB_ADDR, OUTPUT_MODE, 7, 0x00000000, 0x000000C0, 0x00000100);
+  GPIO_Port_Configure(GPIOB_ADDR, OUTPUT_MODE, 14, 0x00000000, 0x000000C0, 0x00000100);
+  GPIO_Set_Pin(GPIOB_ADDR, 7);
+  GPIO_Reset_Pin(GPIOB_ADDR, 0);
+  GPIO_Set_Pin(GPIOB_ADDR, 14);
 
   /* USER CODE END Init */
 
@@ -99,7 +103,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  __WFI();// wait for interrupt
+
   }
   /* USER CODE END 3 */
 }
