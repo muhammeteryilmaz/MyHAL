@@ -57,7 +57,7 @@ void GPIO_Port_Write(void)
  *
  * PUPDR Reset Values: 		0x64000000 for port A,  0x00000100 for port B   0x00000000 for other ports
  */
-void GPIO_Port_Configure(uintptr_t port, uint8_t mode, uint8_t pin, uint32_t otype, uint32_t speed, uint32_t pupdr)
+void GPIO_Port_Configure(uintptr_t port, GPIO_Moder_t mode, uint8_t pin, GPIO_Type_t otype, GPIO_Speed_t speed, GPIO_Pull_t pupdr)
 {
 
 	if (pin <= 15)
@@ -82,7 +82,7 @@ void GPIO_Set_Pin(uintptr_t port, uint8_t pin)
 
 	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
 
-	if (GPIO_GetMode(port, pin) == OUTPUT_MODE)
+	if (GPIO_GetMode(port, pin) == GPIO_OUTPUT_MODE)
 		*reg = (0x1U << pin);
 }
 
@@ -94,9 +94,30 @@ void GPIO_Reset_Pin(uintptr_t port, uint8_t pin)
 
 	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
 
-	if (GPIO_GetMode(port, pin) == OUTPUT_MODE)
+	if (GPIO_GetMode(port, pin) == GPIO_OUTPUT_MODE)
 		*reg = (0x1U << (16U + pin));
 
+}
+
+GPIO_Pin_State_t GPIO_Read_Pin(uintptr_t port, uint8_t pin)
+{
+	volatile uint32_t *idr = ((volatile uint32_t *)(port + IDR_OFFSET_ADDR));
+
+	uint32_t current_idr = *idr;
+
+	uint32_t mask = 0;
+
+	mask |= (0x01U << pin);
+
+	current_idr &= mask;
+
+	current_idr = (current_idr >> pin);
+
+	if (current_idr == 1U)
+		return SET_STATE;
+	if (current_idr == 0U)
+		return RESET_STATE;
+	return RESET_STATE;
 }
 
 /*
@@ -117,13 +138,13 @@ uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin)
 	port_mode = (port_mode >> (pin*2U));
 
 	if (port_mode == 0x01)
-		return OUTPUT_MODE;
+		return GPIO_OUTPUT_MODE;
 	if (port_mode == 0x00)
-		return INPUT_MODE;
+		return GPIO_INPUT_MODE;
 	if (port_mode == 0x02)
-		return ALTRNT_FUNC_MODE;
+		return GPIO_ALTRNT_FUNC_MODE;
 	if (port_mode == 0x03)
-		return ANALOG_MODE;
+		return GPIO_ANALOG_MODE;
 	else
 		return UINT8_MAX;
 }
