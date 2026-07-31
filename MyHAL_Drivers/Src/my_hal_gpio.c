@@ -79,11 +79,11 @@ void GPIO_Port_Configure(uintptr_t port, GPIO_Moder_t mode, uint8_t pin, GPIO_Ty
  */
 void GPIO_Set_Pin(uintptr_t port, uint8_t pin)
 {
-
-	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
-
 	if (GPIO_GetMode(port, pin) == GPIO_OUTPUT_MODE)
+	{
+		volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
 		*reg = (0x1U << pin);
+	}
 }
 
 /*
@@ -92,11 +92,11 @@ void GPIO_Set_Pin(uintptr_t port, uint8_t pin)
 void GPIO_Reset_Pin(uintptr_t port, uint8_t pin)
 {
 
-	volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
-
 	if (GPIO_GetMode(port, pin) == GPIO_OUTPUT_MODE)
+	{
+		volatile uint32_t *reg = ((volatile uint32_t *)(port + BSRR_OFFSET_ADDR));
 		*reg = (0x1U << (16U + pin));
-
+	}
 }
 
 GPIO_Pin_State_t GPIO_Read_Pin(uintptr_t port, uint8_t pin)
@@ -118,6 +118,17 @@ GPIO_Pin_State_t GPIO_Read_Pin(uintptr_t port, uint8_t pin)
 	if (current_idr == 0U)
 		return RESET_STATE;
 	return RESET_STATE;
+}
+
+void GPIO_Pin_Toggle(uintptr_t port, uint8_t pin)
+{
+
+	if (GPIO_GetMode(port, pin) == GPIO_OUTPUT_MODE)
+	{
+		volatile uint32_t *odr = ((volatile uint32_t *)(port + ODR_OFFSET_ADDR));
+		*odr ^= (1U << pin);
+	}
+
 }
 
 /*

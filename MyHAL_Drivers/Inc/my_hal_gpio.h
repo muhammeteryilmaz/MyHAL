@@ -26,8 +26,6 @@
 #define GPIOB_ADDR				0x40020400
 #define RCC_BASE_ADDR        	0x40023800
 
-#define GPIOB_IDR_ADDR			((volatile uint32_t *)(GPIOB_ADDR + IDR_OFFSET_ADDR))
-#define GPIOB_ODR_ADDR			((volatile uint32_t *)(GPIOB_ADDR + ODR_OFFSET_ADDR))
 
 #define RCC_AHB1ENR 			(*(volatile uint32_t *)(RCC_BASE_ADDR + AHB1ENR_OFFSET))
 
@@ -86,6 +84,7 @@ void GPIO_Init(void);
 void GPIO_Port_Write(void);
 void GPIO_Set_Pin(uintptr_t port, uint8_t pin);
 void GPIO_Reset_Pin(uintptr_t port, uint8_t pin);
+void GPIO_Pin_Toggle(uintptr_t port, uint8_t pin);
 uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin);
 GPIO_Pin_State_t GPIO_Read_Pin(uintptr_t port, uint8_t pin);
 void GPIO_Port_Configure(uintptr_t port, GPIO_Moder_t mode, uint8_t pin, GPIO_Type_t otype, GPIO_Speed_t speed, GPIO_Pull_t pupdr);
