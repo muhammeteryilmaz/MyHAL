@@ -23,7 +23,8 @@ The main objectives are:
 
 ### Current
 
-- [x] GPIO (In Progress)
+- [x] GPIO 
+- [x] RCC (In Progress)
 
 ### Planned
 
