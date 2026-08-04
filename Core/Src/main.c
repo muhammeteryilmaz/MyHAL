@@ -73,8 +73,11 @@ int main(void)
   //HAL_Init();
 
   /* USER CODE BEGIN Init */
-  GPIO_Init();
 
+  RCC_HSI_Enable();
+  RCC_Select_HSI_For_SysClock();
+
+  GPIO_Enable();
   GPIO_Port_Configure(GPIOB_ADDR, GPIO_OUTPUT_MODE, 0, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
 
 
@@ -95,16 +98,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  if (RCC_Get_SysClock_Source() == 0)
+  {
+	  GPIO_Set_Pin(GPIOB_ADDR, 0);
+  }
+  else
+	  GPIO_Reset_Pin(GPIOB_ADDR, 0);
+
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  for(int i = 1000000; i>0; i--)
-	  {
-
-	  }
-	  GPIO_Pin_Toggle(GPIOB_ADDR, 0);
 
   }
   /* USER CODE END 3 */

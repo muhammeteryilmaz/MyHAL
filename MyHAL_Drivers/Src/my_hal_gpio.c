@@ -15,7 +15,7 @@ static GPIO_Config_t gpio;
 /*
  * Starts GPIO Clock.
  */
-void GPIO_Init(void)
+void GPIO_Enable(void)
 {
 	RCC_AHB1ENR |= (0x1U << 1U);
 }
@@ -33,7 +33,7 @@ void GPIO_Port_Write(void)
 	*moder &= ~(0x3U << gpio.pin*2); //clear bits
 	*moder |= (gpio.mode << gpio.pin*2); // set 0 and 1 bit as 01
 
-	*type &= ~(0x3U << gpio.pin); //clear bits
+	*type &= ~(0x1U << gpio.pin); //clear bits
 	*type |= (gpio.otype << gpio.pin);
 
 	*speed &= ~(0x3U << gpio.pin*2); //clear bits

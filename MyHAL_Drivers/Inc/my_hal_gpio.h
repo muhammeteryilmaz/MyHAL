@@ -80,7 +80,7 @@ typedef struct
 } GPIO_Config_t;
 
 
-void GPIO_Init(void);
+void GPIO_Enable(void);
 void GPIO_Port_Write(void);
 void GPIO_Set_Pin(uintptr_t port, uint8_t pin);
 void GPIO_Reset_Pin(uintptr_t port, uint8_t pin);
