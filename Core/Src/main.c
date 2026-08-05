@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "my_hal_gpio.h"
+#include "my_hal_rcc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+static RCC_SysClock_Source_t src;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -74,8 +75,9 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
-  RCC_HSI_Enable();
-  RCC_Select_HSI_For_SysClock();
+  RCC_Enable_Oscillator(RCC_HSE);
+  RCC_Enable_PLL();
+  RCC_Select_SysClock_Source(PLL_P);
 
   GPIO_Enable();
   GPIO_Port_Configure(GPIOB_ADDR, GPIO_OUTPUT_MODE, 0, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
@@ -98,7 +100,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  if (RCC_Get_SysClock_Source() == 0)
+  src = RCC_Get_SysClock_Source();
+  if (src == PLL_P)
   {
 	  GPIO_Set_Pin(GPIOB_ADDR, 0);
   }
