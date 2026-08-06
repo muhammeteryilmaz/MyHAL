@@ -17,6 +17,8 @@
 #define RCC_CR_OFFSET_ADDR		0x00
 #define RCC_CFGR_OFFSET_ADDR	0x08
 #define RCC_PLLCFGR_OFFSET_ADDR	0x04
+#define RCC_APB1ENR_OFFSET_ADDR	0x40
+
 
 #define PWR_CR_OFFSET_ADDR		0x00
 
@@ -36,6 +38,7 @@ typedef enum {
 	PLL_P = 2U,
 	PLL_R = 3U
 } RCC_SysClock_Source_t;
+
 
 void RCC_Enable_PLL(void);
 void RCC_Enable_Oscillator(RCC_Oscillator_t rcc_hsx);

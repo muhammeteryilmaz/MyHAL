@@ -23,13 +23,20 @@ void RCC_Enable_Oscillator(RCC_Oscillator_t rcc_hsx)
 	    while(((*rcc_cr & (1U << (rcc_hsx + 1U))) == 0U)){
 	        timeout++;
 	        if(timeout > 10000U){
-	            return;  // HSE yok, timeout
+	            return;  // no HSE , timeout
 	        }
 	    }
 }
 
 void RCC_Enable_PLL(void)
 {
+	// rcc apb1 enable for pwr_cr
+
+	volatile uint32_t *rcc_apb1enr = (volatile uint32_t *)(RCC_ADDR + RCC_APB1ENR_OFFSET_ADDR);
+
+	*rcc_apb1enr |= (1U << 28); // apb1 bus line power clock enable.
+
+
 	// voltage regulator
 
 	volatile uint32_t *pwr_cr = (volatile uint32_t *)(PWR_ADDR + PWR_CR_OFFSET_ADDR);
@@ -43,18 +50,39 @@ void RCC_Enable_PLL(void)
 
 	volatile uint32_t *flash_acr = (volatile uint32_t *)(FLASH_ADDR + FLASH_ACR_OFFSET_ADDR);
 
-	*flash_acr = *flash_acr | (1U << 10) | (1U << 9) | (1U << 8) | (0x05U << 0);
+	*flash_acr |= (1U << 10);
+	*flash_acr |= (1U << 9);
+	*flash_acr |= (1U << 8);
 
+	*flash_acr &= ~(0x0FU << 0);
+	*flash_acr |= (5U << 0);
 
 	//ahb, apb1 apb2 hclk configurations
 	volatile uint32_t *rcc_cfgr = (volatile uint32_t *)(RCC_ADDR + RCC_CFGR_OFFSET_ADDR);
 
-	*rcc_cfgr = *rcc_cfgr | (4U << 13) | (5U << 10) | (8U << 4);
+	*rcc_cfgr &= ~(0x7U << 13);
+	*rcc_cfgr |= (0x4U << 13);
+
+	*rcc_cfgr &= ~(0x7U << 10);
+	*rcc_cfgr |= (0x5U << 10);
+
+	*rcc_cfgr &= ~(0xFU << 4);
+	*rcc_cfgr |= (0x0U << 4);
+
 
 	// pll register configurations
 	volatile uint32_t *rcc_pllcfgr = (volatile uint32_t *)(RCC_ADDR + RCC_PLLCFGR_OFFSET_ADDR);
 
-	*rcc_pllcfgr = *rcc_pllcfgr | (0U << 16) | (180U << 6) | (4U << 0);
+	*rcc_pllcfgr |= (1U << 22);
+
+	*rcc_pllcfgr &= ~(0x3U << 16);
+	*rcc_pllcfgr |= (0U << 16);
+
+	*rcc_pllcfgr &= ~(0x1FFU << 6);
+	*rcc_pllcfgr |= (168U << 6);
+
+	*rcc_pllcfgr &= ~(0x3FU << 0);
+	*rcc_pllcfgr |= (4U << 0);
 
 	//pll
 	volatile uint32_t *rcc_cr = (volatile uint32_t *)(RCC_ADDR + RCC_CR_OFFSET_ADDR);
