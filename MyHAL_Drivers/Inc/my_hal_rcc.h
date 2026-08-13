@@ -24,6 +24,14 @@
 
 #define FLASH_ACR_OFFSET_ADDR	0x00
 
+//From ARM Cortex-M4 Generic User Guide for SysTick Control Register addresses
+#define SYSTICK_FREQ 1000UL  // 1ms
+#define SYST_CSR 				(*(volatile uint32_t *)(0xE000E010)) // SysTick Control and Status Register RW
+#define SYST_RVR 				(*(volatile uint32_t *)(0xE000E014)) // SysTick Reload Value Register RW
+#define SYST_CVR 				(*(volatile uint32_t *)(0xE000E018)) // SysTick Current Value Register RW
+#define SYST_CALIB 				(*(volatile uint32_t *)(0xE000E01C)) // SysTick Calibration Value Register RO
+
+
 
 typedef enum {
 	RCC_HSI	= 0U,

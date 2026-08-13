@@ -127,3 +127,19 @@ RCC_SysClock_Source_t RCC_Get_SysClock_Source(void)
 	return source;
 
 }
+
+void RCC_SysTick_Init(void)
+{
+	volatile uint32_t *rcc_pllcfgr = (volatile uint32_t *)(RCC_ADDR + RCC_PLLCFGR_OFFSET_ADDR);
+
+	uint32_t pllcfgr = *rcc_pllcfgr;
+
+	pllcfgr = (pllcfgr >> 6U);
+
+	uint32_t plln = pllcfgr & 0x1FF;
+
+	SYST_RVR = ((plln) - 1);
+	SYST_CVR = 0;
+	SYST_CSR = SYST_CSR | (1U << 0) | (1U << 1) | (1U << 2);
+
+}
