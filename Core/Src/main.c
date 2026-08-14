@@ -111,7 +111,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	GPIO_Pin_Toggle(GPIOB_ADDR, 0);
-	MyHAL_Delay(1000);
+	MyHAL_Delay(500);
     /* USER CODE BEGIN 3 */
 
   }

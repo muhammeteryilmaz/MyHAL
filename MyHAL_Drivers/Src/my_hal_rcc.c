@@ -12,6 +12,8 @@ void RCC_Enable_Oscillator(RCC_Oscillator_t rcc_hsx)
 {
 	volatile uint32_t *rcc_cr = (volatile uint32_t *)(RCC_ADDR + RCC_CR_OFFSET_ADDR);
 
+	if (rcc_hsx == RCC_HSE)
+		*rcc_cr |= (1U << 18);  // HSE bypass
 
 	*rcc_cr |= (1U << rcc_hsx); // oscillator ON
 
