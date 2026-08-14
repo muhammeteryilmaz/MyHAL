@@ -39,7 +39,6 @@ typedef enum {
 } RCC_Oscillator_t;
 
 
-
 typedef enum {
 	HSI = 0U,
 	HSE = 1U,
@@ -52,5 +51,10 @@ void RCC_Enable_PLL(void);
 void RCC_Enable_Oscillator(RCC_Oscillator_t rcc_hsx);
 void RCC_Select_SysClock_Source(RCC_SysClock_Source_t source);
 RCC_SysClock_Source_t RCC_Get_SysClock_Source(void);
+RCC_Oscillator_t RCC_Get_PLL_Source(void);
+uint32_t RCC_Get_SysClock_Freq(void);
+uint32_t RCC_Get_HCLK_Freq(void);
+void RCC_SysTick_Init(void);
+void MyHAL_Delay(uint32_t ms);
 
 #endif /* INC_MY_HAL_RCC_H_ */

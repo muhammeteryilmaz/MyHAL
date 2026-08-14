@@ -43,7 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static RCC_SysClock_Source_t src;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,6 +79,9 @@ int main(void)
   RCC_Enable_PLL();
   RCC_Select_SysClock_Source(PLL_P);
 
+  RCC_SysTick_Init();
+
+
   GPIO_Enable();
   GPIO_Port_Configure(GPIOB_ADDR, GPIO_OUTPUT_MODE, 0, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
 
@@ -100,19 +103,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  src = RCC_Get_SysClock_Source();
-  if (src == PLL_P)
-  {
-	  GPIO_Set_Pin(GPIOB_ADDR, 0);
-  }
-  else
-	  GPIO_Reset_Pin(GPIOB_ADDR, 0);
+
+
 
 
   while (1)
   {
     /* USER CODE END WHILE */
-
+	GPIO_Pin_Toggle(GPIOB_ADDR, 0);
+	MyHAL_Delay(1000);
     /* USER CODE BEGIN 3 */
 
   }

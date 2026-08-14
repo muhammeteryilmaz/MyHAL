@@ -8,8 +8,6 @@
 #include "my_hal_rcc.h"
 
 
-
-
 void RCC_Enable_Oscillator(RCC_Oscillator_t rcc_hsx)
 {
 	volatile uint32_t *rcc_cr = (volatile uint32_t *)(RCC_ADDR + RCC_CR_OFFSET_ADDR);
@@ -128,18 +126,78 @@ RCC_SysClock_Source_t RCC_Get_SysClock_Source(void)
 
 }
 
-void RCC_SysTick_Init(void)
+RCC_Oscillator_t RCC_Get_PLL_Source(void)
 {
 	volatile uint32_t *rcc_pllcfgr = (volatile uint32_t *)(RCC_ADDR + RCC_PLLCFGR_OFFSET_ADDR);
 
-	uint32_t pllcfgr = *rcc_pllcfgr;
+	uint32_t pll_src = *rcc_pllcfgr;
 
-	pllcfgr = (pllcfgr >> 6U);
+	pll_src = (pll_src >> 22) & 0x01;
 
-	uint32_t plln = pllcfgr & 0x1FF;
+	return (pll_src) ? RCC_HSE : RCC_HSI;
 
-	SYST_RVR = ((plln) - 1);
+}
+
+uint32_t RCC_Get_SysClock_Freq(void)
+{
+	volatile uint32_t *rcc_pllcfgr = (volatile uint32_t *)(RCC_ADDR + RCC_PLLCFGR_OFFSET_ADDR);
+
+    uint32_t pllcfgr = *rcc_pllcfgr;
+
+    uint32_t pllm = pllcfgr & 0x3FU;
+    uint32_t plln = (pllcfgr >> 6U) & 0x1FFU;
+    uint32_t pllp = (pllcfgr >> 16U) & 0x3U;
+
+	pllp = ((2U * pllp) + 2U);
+
+
+
+	if (RCC_Get_SysClock_Source() == HSI)
+		return 16000000U;
+
+	else if (RCC_Get_SysClock_Source() == HSE)
+		return 8000000U;
+
+	return RCC_Get_PLL_Source() ? (((16000000U / pllm) * plln) / pllp) : (((8000000U / pllm) * plln) / pllp);
+
+}
+
+uint32_t RCC_Get_HCLK_Freq(void)
+{
+
+	static const uint16_t ahb_prescaler_table[16] =
+	{
+	    1, 1, 1, 1, 1, 1, 1, 1,
+	    2, 4, 8, 16, 64, 128, 256, 512
+	};
+
+	volatile uint32_t *rcc_cfgr = (volatile uint32_t *)(RCC_ADDR + RCC_CFGR_OFFSET_ADDR);
+
+	uint32_t ahb_prescaler = ((*rcc_cfgr) >> 4) & 0x0F;
+
+	uint32_t prescaler = ahb_prescaler_table[ahb_prescaler];
+
+	return (RCC_Get_SysClock_Freq() / prescaler);
+}
+
+void RCC_SysTick_Init(void)
+{
+
+	SYST_RVR = ((RCC_Get_HCLK_Freq() / SYSTICK_FREQ) - 1);
 	SYST_CVR = 0;
 	SYST_CSR = SYST_CSR | (1U << 0) | (1U << 1) | (1U << 2);
 
 }
+
+
+
+void MyHAL_Delay(uint32_t ms)
+{
+	while(ms)
+	{
+		if (((SYST_CSR >> 16) & 0x01))
+			--ms;
+	}
+}
+
+
