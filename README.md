@@ -24,11 +24,12 @@ The main objectives are:
 ### Current
 
 - [x] GPIO 
-- [x] RCC (In Progress)
+- [x] RCC
+- [X] UART (In Progress)
+
 
 ### Planned
 
-- [ ] UART
 - [ ] SPI
 - [ ] I2C
 - [ ] ADC
