@@ -24,6 +24,7 @@
 
 //GPIOx and GPIO clock base addresses
 #define GPIOB_ADDR				0x40020400
+#define GPIOA_ADDR				0x40020000
 #define RCC_BASE_ADDR        	0x40023800
 
 

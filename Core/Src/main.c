@@ -78,12 +78,14 @@ int main(void)
   RCC_Enable_Oscillator(RCC_HSE);
   RCC_Enable_PLL();
   RCC_Select_SysClock_Source(PLL_P);
+  RCC_APB2_USART1_Enable();
 
   RCC_SysTick_Init();
 
 
   GPIO_Enable();
-  GPIO_Port_Configure(GPIOB_ADDR, GPIO_OUTPUT_MODE, 0, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
+  GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 9, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
+  GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 10, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
 
 
 
@@ -110,8 +112,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	GPIO_Pin_Toggle(GPIOB_ADDR, 0);
-	MyHAL_Delay(500);
+
     /* USER CODE BEGIN 3 */
 
   }

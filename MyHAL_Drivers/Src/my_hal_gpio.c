@@ -17,7 +17,8 @@ static GPIO_Config_t gpio;
  */
 void GPIO_Enable(void)
 {
-	RCC_AHB1ENR |= (0x1U << 1U);
+	RCC_AHB1ENR |= (0x1U << 1U); //GPIOB Enable
+	RCC_AHB1ENR |= (0x1U << 0U); //GPIOA Enable
 }
 
 /*
@@ -159,4 +160,5 @@ uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin)
 	else
 		return UINT8_MAX;
 }
+
 
