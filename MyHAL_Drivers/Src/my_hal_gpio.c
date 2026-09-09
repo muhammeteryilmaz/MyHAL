@@ -161,4 +161,10 @@ uint8_t GPIO_GetMode(uintptr_t port, uint8_t pin)
 		return UINT8_MAX;
 }
 
+void GPIO_Alternate_Func_Set_Port(void)
+{
+	volatile uint32_t *afrh = (volatile uint32_t *)(GPIOA_ADDR + AFRH_OFFSET_ADDR);
 
+	*afrh &= ~(0xFU << 0x04);
+	*afrh |= (7U << 0x04); // AFHR9 port, AF7 for USART1
+}

@@ -20,7 +20,9 @@
 #define IDR_OFFSET_ADDR			0x10
 #define ODR_OFFSET_ADDR			0x14
 #define BSRR_OFFSET_ADDR		0x18
+#define AFRH_OFFSET_ADDR		0x24
 #define AHB1ENR_OFFSET       	0x30
+
 
 //GPIOx and GPIO clock base addresses
 #define GPIOB_ADDR				0x40020400
@@ -83,6 +85,7 @@ typedef struct
 
 void GPIO_Enable(void);
 void GPIO_Port_Write(void);
+void GPIO_Alternate_Func_Set_Port(void);
 void GPIO_Set_Pin(uintptr_t port, uint8_t pin);
 void GPIO_Reset_Pin(uintptr_t port, uint8_t pin);
 void GPIO_Pin_Toggle(uintptr_t port, uint8_t pin);

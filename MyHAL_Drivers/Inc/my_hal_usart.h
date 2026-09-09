@@ -29,7 +29,7 @@
 #define USART_CR2_OFFSET_ADDR		0x10
 #define USART_CR3_OFFSET_ADDR		0x14
 
-
+#define USART_SR					*((volatile uint32_t *)(USART1_ADDR + USART_SR_OFFSET_ADDR))
 #define USART_CR1					*((volatile uint32_t *)(USART1_ADDR + USART_CR1_OFFSET_ADDR))
 #define USART_CR2					*((volatile uint32_t *)(USART1_ADDR + USART_CR2_OFFSET_ADDR))
 #define USART_CR3					*((volatile uint32_t *)(USART1_ADDR + USART_CR3_OFFSET_ADDR))
@@ -38,5 +38,14 @@
 #define RCC_APB2ENR 				*((volatile uint32_t *)(RCC_BASE_ADDR + RCC_APB2ENR_OFFSET_ADDR))
 
 void RCC_APB2_USART1_Enable(void);
+
+
+
+void RCC_APB2_USART1_Enable(void);
+void USART_TX_Enable(void);
+void USART_RX_Enable(void);
+void USART_DR_Load(uint8_t *buf, uint32_t len);
+
+
 
 #endif /* INC_MY_HAL_USART_H_ */

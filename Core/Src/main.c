@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "my_hal_gpio.h"
 #include "my_hal_rcc.h"
+#include "my_hal_usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,7 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t data[3] = {0x1,0x2,0x3};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,18 +76,22 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
-  RCC_Enable_Oscillator(RCC_HSE);
-  RCC_Enable_PLL();
-  RCC_Select_SysClock_Source(PLL_P);
+  RCC_Enable_Oscillator(RCC_HSI);
+  //RCC_Enable_PLL();
+  RCC_Select_SysClock_Source(HSI);
   RCC_APB2_USART1_Enable();
 
   RCC_SysTick_Init();
 
 
   GPIO_Enable();
-  GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 9, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
-  GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 10, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
 
+
+  GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 9, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_NOPULL);
+  //GPIO_Port_Configure(GPIOA_ADDR, GPIO_ALTRNT_FUNC_MODE, 10, GPIO_PUSH_PULL, GPIO_SPEED_HIGH, GPIO_PULLDOWN);
+  GPIO_Alternate_Func_Set_Port();
+
+  USART_TX_Enable();
 
 
   /* USER CODE END Init */
@@ -114,7 +119,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+	  USART_DR_Load(data, sizeof(data));
+	  MyHAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }

@@ -17,14 +17,13 @@ void RCC_APB2_USART1_Enable(void)
 void USART_TX_Enable(void)
 {
 
-
-	USART_CR1 |= (1U << 0x0D); // USART Enable
-	USART_CR1 |= (0U << 0x0C); // M: Word Length = 8
-	USART_CR2 |= (0U << 0x0C); // Number of stop bits
-	USART_CR1 |= (0U << 0x0F); // OVER8 bit is 0 for Baud rate calculations.
-	USART_BRR = USART_BRR | (0x222 << 0x04) | (0xE << 0x0); // 546.875 value for 9600 baudrate with 84 MHz PCLK
-	USART_CR1 |= (0U << 0x0B); // WAKE is 0, IDLE LINE MODE
+	USART_CR1 &= ~(1U << 0x0C); // M: Word Length = 8
+	USART_CR2 &= ~(3U << 0x0C); // Number of stop bits
+	USART_CR1 &= ~(1U << 0x0F); // OVER8 bit is 0 for Baud rate calculations.
+	USART_BRR = 0x683U;         // PCLK2 = 16 MHz, Baud = 9600
+	USART_CR1 &= (1U << 0x0B); // WAKE is 0, IDLE LINE MODE
 	USART_CR1 |= (1U << 0x03); // TE Enable send idle frame as first
+	USART_CR1 |= (1U << 0x0D); // USART Enable
 
 }
 
@@ -37,13 +36,19 @@ void USART_RX_Enable(void)
 
 }
 
-void USART_DR_Load(uint8_t buf, uint32_t len)
+void USART_DR_Load(uint8_t *buf, uint32_t len)
 {
 
+	uint32_t cursor = 0;
 	while(len)
 	{
-		USART_DR &= ~(0xFF << 0x0); //clear the data register
-		USART_DR |= (buf << 0x0); //write the data
-		len -= sizeof(buf);
+		while (!(USART_SR & (1U << 7U)))
+		{
+			// Wait until TXE bit is 1 in USART_SR register.
+		}
+
+		USART_DR = buf[cursor]; //write the data
+		cursor++;
+		len--;
 	}
 }
